@@ -1,16 +1,21 @@
 import java.sql.*;
+import java.util.InputMismatchException;
 import java.util.Scanner;
 
 public class AnagraficaApp {
+
     private static Connection connection;
 
     public static void main(String[] args) {
+
         Scanner scanner = new Scanner(System.in);
-        int scelta;
+        int scelta = 6;
 
         try {
+            Class.forName("com.mysql.cj.jdbc.Driver");
+
             connection = DriverManager.getConnection(
-                    "jdbc:mysql//127.0.0.1:3306/anagrafica_schema",
+                    "jdbc:mysql://127.0.0.1:3306/anagrafica_schema",
                     "root",
                     "A6ced1d6!!"
             );
@@ -24,9 +29,15 @@ public class AnagraficaApp {
                 System.out.println("5 – Stampa elenco anagrafico");
                 System.out.println("6 – Esci");
                 System.out.print("Scegli un'opzione: ");
-                scelta = scanner.nextInt();
-                scanner.nextLine();  // Consuma la nuova linea
-                System.out.println();
+
+                try {
+                    scelta = scanner.nextInt();
+                    scanner.nextLine();  // Consuma la nuova linea
+                    System.out.println();
+                } catch (InputMismatchException e) {
+                    System.out.println("Scelta non valida!");
+                    scelta = 6;
+                }
 
                 switch (scelta) {
                     case 1:
@@ -56,6 +67,8 @@ public class AnagraficaApp {
         } catch (SQLException e) {
             System.out.println("Qualcosa è andato storto :/");
             e.printStackTrace();
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException(e);
         }
 
         scanner.close();
@@ -68,7 +81,7 @@ public class AnagraficaApp {
         String nome = scanner.nextLine();
 
         try {
-            String query = "INSERT INTO utenti (codice_fiscale, nome) VALUES (?, ?)";
+            String query = "INSERT INTO utenti (codice_fiscale, username) VALUES (?, ?)";
             PreparedStatement preparedStatement = connection.prepareStatement(query);
             preparedStatement.setString(1, codiceFiscale);
             preparedStatement.setString(2, nome);
@@ -91,7 +104,7 @@ public class AnagraficaApp {
             ResultSet resultSet = preparedStatement.executeQuery();
 
             if (resultSet.next()) {
-                System.out.println("Nome associato: " + resultSet.getString("nome"));
+                System.out.println("Nome associato: " + resultSet.getString("username"));
             } else {
                 System.out.println("Nessuna persona trovata con il codice fiscale: " + codiceFiscaleDaCercare);
             }
@@ -153,7 +166,7 @@ public class AnagraficaApp {
             }
 
             while (resultSet.next()) {
-                System.out.println("Codice Fiscale: " + resultSet.getString("codice_fiscale") + " - " + "Nome: " + resultSet.getString("nome"));
+                System.out.println("Codice Fiscale: " + resultSet.getString("codice_fiscale") + " - " + "Nome: " + resultSet.getString("username"));
             }
         } catch (SQLException e) {
             System.out.println("Errore durante la stampa dell'elenco:");
@@ -161,3 +174,26 @@ public class AnagraficaApp {
         }
     }
 }
+//
+//class Persona {
+//    private String codiceFiscale;
+//    private String nome;
+//
+//    public Persona(String codiceFiscale, String nome) {
+//        this.codiceFiscale = codiceFiscale;
+//        this.nome = nome;
+//    }
+//
+//    public String getCodiceFiscale() {
+//        return codiceFiscale;
+//    }
+//
+//    public String getNome() {
+//        return nome;
+//    }
+//
+//    @Override
+//    public String toString() {
+//        return "Codice Fiscale: " + codiceFiscale + " - " + "Nome: " + nome;
+//    }
+//}
