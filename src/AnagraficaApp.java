@@ -101,4 +101,27 @@ public class AnagraficaApp {
         }
     }
 
+
+    private static void cancellaAnagrafica(Scanner scanner) {
+        System.out.print("Inserisci codice fiscale dell'anagrafica da cancellare: ");
+        String codiceFiscaleDaCancellare = scanner.nextLine();
+
+        try {
+            String query = "DELETE FROM utenti WHERE codice_fiscale = ?";
+            PreparedStatement preparedStatement = connection.prepareStatement(query);
+            preparedStatement.setString(1, codiceFiscaleDaCancellare);
+            int rowsAffected = preparedStatement.executeUpdate();
+
+            if (rowsAffected > 0) {
+                System.out.println("Anagrafica cancellata.");
+            } else {
+                System.out.println("Nessuna persona trovata con il codice fiscale " + codiceFiscaleDaCancellare);
+            }
+
+        } catch (SQLException e) {
+            System.out.println("Errore durante la cancellazione dell'anagrafica:");
+            e.printStackTrace();
+        }
+    }
+
 }
