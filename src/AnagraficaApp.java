@@ -124,4 +124,22 @@ public class AnagraficaApp {
         }
     }
 
+
+    private static void stampaNumeroPersone() {
+        try {
+            String query = "SELECT COUNT(*) AS \"Numero Persone\" FROM utenti";
+            PreparedStatement preparedStatement = connection.prepareStatement(query);
+            ResultSet resultSet = preparedStatement.executeQuery();
+
+            if (resultSet.next()) {
+                System.out.println("Numero di persone inserite: " + resultSet.getInt("Numero Persone"));
+            }
+
+        } catch (SQLException e) {
+            System.out.println("Errore durante il conteggio delle persone:");
+            e.printStackTrace();
+        }
+    }
+
+
 }
