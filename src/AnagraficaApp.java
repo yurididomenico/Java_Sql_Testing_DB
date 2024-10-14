@@ -80,5 +80,25 @@ public class AnagraficaApp {
         }
     }
 
+    private static void cercaNome(Scanner scanner) {
+        System.out.print("Inserisci codice fiscale da cercare: ");
+        String codiceFiscaleDaCercare = scanner.nextLine();
+
+        try {
+            String query = "SELECT * FROM utenti WHERE codice_fiscale = ?";
+            PreparedStatement preparedStatement = connection.prepareStatement(query);
+            preparedStatement.setString(1, codiceFiscaleDaCercare);
+            ResultSet resultSet = preparedStatement.executeQuery();
+
+            if (resultSet.next()) {
+                System.out.println("Nome associato: " + resultSet.getString("nome"));
+            } else {
+                System.out.println("Nessuna persona trovata con il codice fiscale: " + codiceFiscaleDaCercare);
+            }
+        } catch (SQLException e) {
+            System.out.println("Errore durante la ricerca dell'anagrafica:");
+            e.printStackTrace();
+        }
+    }
 
 }
