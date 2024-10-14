@@ -141,5 +141,23 @@ public class AnagraficaApp {
         }
     }
 
+    private static void stampaElencoAnagrafico() {
+        try {
+            String query = "SELECT * FROM utenti";
+            PreparedStatement preparedStatement = connection.prepareStatement(query);
+            ResultSet resultSet = preparedStatement.executeQuery();
 
+            if (!resultSet.isBeforeFirst()) {
+                System.out.println("Nessun utente inserito.");
+                return;
+            }
+
+            while (resultSet.next()) {
+                System.out.println("Codice Fiscale: " + resultSet.getString("codice_fiscale") + " - " + "Nome: " + resultSet.getString("nome"));
+            }
+        } catch (SQLException e) {
+            System.out.println("Errore durante la stampa dell'elenco:");
+            e.printStackTrace();
+        }
+    }
 }
